@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  trading.api:
+    image: ${DOCKER_REGISTRY-}tradingapi
+    build:
+      context: .
+      dockerfile: Trading.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__Default=Server=host.docker.internal,1433;Database=TradingDb;User Id=sa;Password=YourPassword;TrustServerCertificate=True;
+      - RabbitMq__Host=rabbitmq
+    ports:
+      - "8080:80"
+      - "8081:443"
+    depends_on:
+      - rabbitmq
+
+  trading.consumer:
+    image: ${DOCKER_REGISTRY-}tradingconsumer
+    build:
+      context: .
+      dockerfile: Trading.Consumer/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMq__Host=rabbitmq
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5673:5672"
+      - "15673:15672"

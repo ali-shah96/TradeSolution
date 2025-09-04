@@ -1,0 +1,13 @@
+services:
+  trading.api:
+    image: ${DOCKER_REGISTRY-}tradingapi
+    build:
+      context: .
+      dockerfile: Trading.Api/Dockerfile
+
+  trading.consumer:
+    image: ${DOCKER_REGISTRY-}tradingconsumer
+    build:
+      context: .
+      dockerfile: Trading.Consumer/Dockerfile
+
